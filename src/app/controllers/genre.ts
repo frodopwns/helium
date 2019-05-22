@@ -1,3 +1,4 @@
+import { RetrievedDocument } from "documentdb";
 import { inject, injectable } from "inversify";
 import { Controller, Get, interfaces } from "inversify-restify-utils";
 import { Request } from "restify";
@@ -36,11 +37,18 @@ export class GenreController implements interfaces.Controller {
             query: "SELECT root.id, root.type, root.genre FROM root where root.type = 'Genre'",
         };
 
-        const results = await this.cosmosDb.queryDocuments(database,
+        let resCode = 200;
+        let results: RetrievedDocument[];
+        try {
+          results = await this.cosmosDb.queryDocuments(
+            database,
             collection,
             querySpec,
-            { enableCrossPartitionQuery: true });
-
-        return res.send(200, results);
+            { enableCrossPartitionQuery: true },
+          );
+        } catch (err) {
+          resCode = 500;
+        }
+        return res.send(resCode, results);
     }
 }

@@ -1,4 +1,4 @@
-import { DocumentQuery } from "documentdb";
+import { DocumentQuery, RetrievedDocument } from "documentdb";
 import { inject, injectable } from "inversify";
 import { Controller, Get, interfaces, Post } from "inversify-restify-utils";
 import { collection, database } from "../../db/dbconstants";
@@ -60,12 +60,19 @@ export class MovieController implements interfaces.Controller {
             };
         }
 
-        const results = await this.cosmosDb.queryDocuments(database,
+        let resCode = 200;
+        let results: RetrievedDocument[];
+        try {
+          results = await this.cosmosDb.queryDocuments(
+            database,
             collection,
             querySpec,
-            { enableCrossPartitionQuery: true });
-
-        return res.send(200, results);
+            { enableCrossPartitionQuery: true },
+          );
+        } catch (err) {
+          resCode = 500;
+        }
+        return res.send(resCode, results);
     }
 
     /**
@@ -90,8 +97,19 @@ export class MovieController implements interfaces.Controller {
             }
         });
 
-        const result = await this.cosmosDb.upsertDocument(database, collection, req.body);
-        return res.send(201, result);
+        // make query, catch errors
+        let resCode: number = 201;
+        let result: RetrievedDocument;
+        try {
+          result = await this.cosmosDb.upsertDocument(
+            database,
+            collection,
+            req.body,
+          );
+        } catch (err) {
+          resCode = 500;
+        }
+        return res.send(resCode, result);
     }
 
     /**
@@ -117,11 +135,18 @@ export class MovieController implements interfaces.Controller {
         };
 
         // movieId isn't the partition key, so any search on it will require a cross-partition query.
-        const results = await this.cosmosDb.queryDocuments(database,
+        let resCode = 200;
+        let results: RetrievedDocument[];
+        try {
+          results = await this.cosmosDb.queryDocuments(
+            database,
             collection,
             querySpec,
-            { enableCrossPartitionQuery: true });
-
-        return res.send(200, results);
+            { enableCrossPartitionQuery: true },
+          );
+        } catch (err) {
+          resCode = 500;
+        }
+        return res.send(resCode, results);
     }
 }
