@@ -6,6 +6,7 @@ import { collection, database } from "../../db/dbconstants";
 import { IDatabaseProvider } from "../../db/idatabaseprovider";
 import { ILoggingProvider } from "../../logging/iLoggingProvider";
 import { ITelemProvider } from "../../telem/itelemprovider";
+import { statusInternalServerError, statusOK } from "./constants";
 
 /**
  * controller implementation for our genres endpoint
@@ -37,7 +38,7 @@ export class GenreController implements interfaces.Controller {
             query: "SELECT root.id, root.type, root.genre FROM root where root.type = 'Genre'",
         };
 
-        let resCode = 200;
+        let resCode = statusOK;
         let results: RetrievedDocument[];
         try {
           results = await this.cosmosDb.queryDocuments(
@@ -47,7 +48,7 @@ export class GenreController implements interfaces.Controller {
             { enableCrossPartitionQuery: true },
           );
         } catch (err) {
-          resCode = 500;
+          resCode = statusInternalServerError;
         }
         return res.send(resCode, results);
     }

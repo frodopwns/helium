@@ -7,6 +7,7 @@ import { IDatabaseProvider } from "../../db/idatabaseprovider";
 import { ILoggingProvider } from "../../logging/iLoggingProvider";
 import { ITelemProvider } from "../../telem/itelemprovider";
 import { Actor } from "../models/actor";
+import { statusBadRequest, statusCreated, statusInternalServerError, statusOK } from "./constants";
 
 /**
  * controller implementation for our actors endpoint
@@ -42,7 +43,7 @@ export class ActorController implements interfaces.Controller {
         };
 
         // make query, catch errors
-        let resCode = 200;
+        let resCode = statusOK;
         let results: RetrievedDocument[];
         try {
           results = await this.cosmosDb.queryDocuments(
@@ -52,7 +53,7 @@ export class ActorController implements interfaces.Controller {
             { enableCrossPartitionQuery: true },
           );
         } catch (err) {
-          resCode = 500;
+          resCode = statusInternalServerError;
         }
         return res.send(resCode, results);
     }
@@ -78,7 +79,7 @@ export class ActorController implements interfaces.Controller {
 
         // actorID isn't the partition key, so any search on it will require a cross-partition query.
         // make query, catch errors
-        let resCode = 200;
+        let resCode = statusOK;
         let results: RetrievedDocument[];
         try {
           results = await this.cosmosDb.queryDocuments(
@@ -88,7 +89,7 @@ export class ActorController implements interfaces.Controller {
             { enableCrossPartitionQuery: true },
           );
         } catch (err) {
-          resCode = 500;
+          resCode = statusInternalServerError;
         }
         return res.send(resCode, results);
 
@@ -106,17 +107,17 @@ export class ActorController implements interfaces.Controller {
 
         actor.validate().then(async (errors) => {
             if (errors.length > 0) {
-                return res.send(400,
+                return res.send(statusBadRequest,
                     {
                         message: [].concat.apply([], errors.map((x) =>
                             Object.values(x.constraints))),
-                        status: 400,
+                        status: statusBadRequest,
                     });
             }
         });
 
-        // make query, catch errors
-        let resCode: number = 201;
+        // upsert document, catch errors
+        let resCode: number = statusCreated;
         let result: RetrievedDocument;
         try {
           result = await this.cosmosDb.upsertDocument(
@@ -125,7 +126,7 @@ export class ActorController implements interfaces.Controller {
             req.body,
           );
         } catch (err) {
-          resCode = 500;
+          resCode = statusInternalServerError;
         }
         return res.send(resCode, result);
     }
