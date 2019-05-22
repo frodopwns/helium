@@ -51,7 +51,7 @@ export class ActorController implements interfaces.Controller {
             querySpec,
             { enableCrossPartitionQuery: true },
           );
-        } catch(err) {
+        } catch (err) {
           resCode = 500;
         }
         return res.send(resCode, results);
@@ -87,7 +87,7 @@ export class ActorController implements interfaces.Controller {
             querySpec,
             { enableCrossPartitionQuery: true },
           );
-        } catch(err) {
+        } catch (err) {
           resCode = 500;
         }
         return res.send(resCode, results);
@@ -124,7 +124,7 @@ export class ActorController implements interfaces.Controller {
             collection,
             req.body,
           );
-        } catch(err) {
+        } catch (err) {
           resCode = 500;
         }
         return res.send(resCode, result);
