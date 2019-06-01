@@ -229,8 +229,8 @@ export class MovieController implements interfaces.Controller {
             }
         });
 
+        // update movie id from url param
         movie.id = movieId;
-        console.log(movie);
 
         // upsert document, catch errors
         let resCode: number = httpStatus.Created;
