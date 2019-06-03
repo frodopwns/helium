@@ -25,15 +25,28 @@ export class MovieController implements interfaces.Controller {
     }
 
     /**
-     * @api {get} /api/movies Request All Movies
-     * @apiName GetAll
-     * @apiGroup Movies
+     * @swagger
      *
-     * @apiDescription
-     * Retrieve and return all movies.
-     * Filter movies by name "?q=<name>".
-     *
-     * @apiParam (query) {String} [q] Movie title.
+     * /api/movies:
+     *   get:
+     *     description: Retrieve and return all movies.
+     *     parameters:
+     *       - name: q
+     *         description: The movie title to filter by.
+     *         in: query
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '200':
+     *         description: List of movie objects
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: '#/components/schemas/Movie'
+     *       default:
+     *         description: Unexpected error
      */
     @Get("/")
     public async getAll(req, res) {
@@ -84,14 +97,29 @@ export class MovieController implements interfaces.Controller {
     }
 
     /**
-     * @api {get} /api/movies/ Request Movie information
-     * @apiName GetMovie
-     * @apiGroup Movies
+     * @swagger
      *
-     * @apiDescription
-     * Retrieve and return a single movie by movie ID.
-     *
-     * @apiParam (query) {String} id Movie's unique ID.
+     * /api/movies/{id}:
+     *   get:
+     *     description: Retrieve and return a single movie by movie ID.
+     *     parameters:
+     *       - name: id
+     *         description: The ID of the movie to look for.
+     *         in: path
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '200':
+     *         description: The movie object
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Movie'
+     *       '404':
+     *         description: An movie with the specified ID was not found.
+     *       default:
+     *         description: Unexpected error
      */
     @Get("/:id")
     public async getMovieById(req, res) {
@@ -134,24 +162,35 @@ export class MovieController implements interfaces.Controller {
     }
 
     /**
-     * @api {post} /api/movies Create Movie
-     * @apiName PostMovie
-     * @apiGroup Movies
+     * @swagger
      *
-     * @apiDescription
-     * Create a movie.
-     *
-     * @apiParam (body) {String} id
-     * @apiParam (body) {String} movieId
-     * @apiParam (body) {String} textSearch
-     * @apiParam (body) {String} title
-     * @apiParam (body) {String="Movie"} type
-     * @apiParam (body) {String} [key]
-     * @apiParam (body) {Number} [year]
-     * @apiParam (body) {Number} [rating]
-     * @apiParam (body) {Number} [votes]
-     * @apiParam (body) {String[]} [genres]
-     * @apiParam (body) {Actor[]} [roles]
+     * /api/movies:
+     *   post:
+     *     requestBody:
+     *       description: Creates an movie.
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/Movie'
+     *         application/xml:
+     *           schema:
+     *             $ref: '#/components/schemas/Movie'
+     *         application/x-www-form-urlencoded:
+     *           schema:
+     *             $ref: '#/components/schemas/Movie'
+     *         text/plain:
+     *           schema:
+     *             type: string
+     *     responses:
+     *       '201':
+     *         description: The created movie
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Movie'
+     *       default:
+     *         description: Unexpected error
      */
     @Post("/")
     public async createMovie(req, res) {
@@ -188,14 +227,25 @@ export class MovieController implements interfaces.Controller {
     }
 
     /**
-     * @api {delete} /api/movies/ Delete Movie
-     * @apiName DeleteMovie
-     * @apiGroup Movies
+     * @swagger
      *
-     * @apiDescription
-     * Delete a movie.
-     *
-     * @apiParam (query) {String} id Movie's unique ID.
+     * /api/movies/{id}:
+     *   delete:
+     *     description: Delete a movie
+     *     parameters:
+     *       - name: id
+     *         description: The ID of the movie to delete.
+     *         in: path
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '204':
+     *         description: The resource was deleted successfully.
+     *       '404':
+     *         description: A movie with that ID does not exist.
+     *       default:
+     *         description: Unexpected error
      */
     @Delete("/:id")
     public async deleteMovieById(req, res) {
@@ -205,14 +255,15 @@ export class MovieController implements interfaces.Controller {
         this.telem.trackEvent("delete movie by id");
 
         // movieId isn't the partition key, so any search on it will require a cross-partition query.
-        let resCode = httpStatus.OK;
-        let result = "deleted";
+        let resCode = httpStatus.NoContent;
+        let result: string;
         try {
           await this.cosmosDb.deleteDocument(
             database,
             collection,
             movieId,
           );
+          return res.send(resCode);
         } catch (err) {
           if (err.toString().includes("NotFound")) {
             resCode = httpStatus.NotFound;

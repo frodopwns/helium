@@ -25,12 +25,22 @@ export class GenreController implements interfaces.Controller {
     }
 
     /**
-     * @api {get} /api/genres Request All Genres
-     * @apiName GetAll
-     * @apiGroup Genres
+     * @swagger
      *
-     * @apiDescription
-     * Retrieve and return all genres.
+     * /api/genres:
+     *   get:
+     *     description: Retrieve and return all genres.
+     *     responses:
+     *       '200':
+     *         description: List of genres objects
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 type: string
+     *       default:
+     *         description: Unexpected error
      */
     @Get("/")
     public async getAll(req: Request, res) {

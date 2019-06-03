@@ -46,6 +46,23 @@ export class SystemController implements interfaces.Controller {
      *       message: "Successfully reached healthcheck endpoint",
      *     }
      */
+
+    /**
+     * @swagger
+     *
+     * /api/genres:
+     *   get:
+     *     description: Tells external services if the service is running.
+     *     responses:
+     *       '200':
+     *         description: Successfully reached healthcheck endpoint
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: string
+     *       default:
+     *         description: Unexpected error
+     */
     @Get("/")
     public async healthcheck(req, res) {
         this.telem.trackEvent("healthcheck called");

@@ -113,8 +113,7 @@ describe("Testing Movie Controller Methods", () => {
         chai.expect(res).to.have.status(201);
         const delReq = chai.request(integrationServer);
         delReq.del(`/api/movies/${randomString}`).set("content-type", "application/json").then((getResponse) => {
-          chai.expect(getResponse).to.have.status(200);
-          chai.expect(getResponse.body).to.equal("deleted");
+          chai.expect(getResponse).to.have.status(204);
           chai.request(integrationServer)
             .get(`/api/movies/${randomString}`)
               .then((getRes) => {
