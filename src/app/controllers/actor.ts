@@ -30,6 +30,8 @@ export class ActorController implements interfaces.Controller {
      * /api/actors:
      *   get:
      *     description: Retrieve and return all actors.
+     *     tags:
+     *       - Actors
      *     responses:
      *       '200':
      *         description: List of actor objects
@@ -76,6 +78,8 @@ export class ActorController implements interfaces.Controller {
      * /api/actors/{id}:
      *   get:
      *     description: Retrieve and return a single actor by actor ID.
+     *     tags:
+     *       - Actors
      *     parameters:
      *       - name: id
      *         description: The ID of the actor to look for.
@@ -142,6 +146,8 @@ export class ActorController implements interfaces.Controller {
      *
      * /api/actors:
      *   post:
+     *     tags:
+     *       - Actors
      *     requestBody:
      *       description: Creates an actor.
      *       required: true

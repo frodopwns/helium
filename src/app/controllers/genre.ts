@@ -30,6 +30,8 @@ export class GenreController implements interfaces.Controller {
      * /api/genres:
      *   get:
      *     description: Retrieve and return all genres.
+     *     tags:
+     *       - Genres
      *     responses:
      *       '200':
      *         description: List of genres objects

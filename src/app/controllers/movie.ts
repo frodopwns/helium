@@ -30,6 +30,8 @@ export class MovieController implements interfaces.Controller {
      * /api/movies:
      *   get:
      *     description: Retrieve and return all movies.
+     *     tags:
+     *       - Movies
      *     parameters:
      *       - name: q
      *         description: The movie title to filter by.
@@ -102,6 +104,8 @@ export class MovieController implements interfaces.Controller {
      * /api/movies/{id}:
      *   get:
      *     description: Retrieve and return a single movie by movie ID.
+     *     tags:
+     *       - Movies
      *     parameters:
      *       - name: id
      *         description: The ID of the movie to look for.
@@ -166,6 +170,8 @@ export class MovieController implements interfaces.Controller {
      *
      * /api/movies:
      *   post:
+     *     tags:
+     *       - Movies
      *     requestBody:
      *       description: Creates an movie.
      *       required: true
@@ -231,6 +237,8 @@ export class MovieController implements interfaces.Controller {
      *
      * /api/movies/{id}:
      *   put:
+     *     tags:
+     *       - Movies
      *     parameters:
      *       - name: id
      *         description: The ID of the movie to patch.
@@ -309,6 +317,8 @@ export class MovieController implements interfaces.Controller {
      * /api/movies/{id}:
      *   delete:
      *     description: Delete a movie
+     *     tags:
+     *       - Movies
      *     parameters:
      *       - name: id
      *         description: The ID of the movie to delete.

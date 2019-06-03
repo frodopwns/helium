@@ -23,36 +23,13 @@ export class SystemController implements interfaces.Controller {
     }
 
     /**
-     * @api {get} /api/healthz Health Check
-     * @apiName GetHealthCheck
-     * @apiGroup System
-     *
-     * @apiDescription
-     * Tells external services if the service is running.
-     *
-     * @apiError (500 InternalServerError) InternalServerError An error was thrown while trying to query the database
-     *
-     * @apiErrorExample {json} Error Response:
-     *     HTTP/1.1 500 Internal Server Error
-     *     {
-     *       message: "Application failed to reach database: <code>e</code>"
-     *     }
-     *
-     * @apiSuccess (200 OK) {String} message The message
-     *
-     * @apiSuccessExample {json} Success Response:
-     *     HTTP/1.1 200 OK
-     *     {
-     *       message: "Successfully reached healthcheck endpoint",
-     *     }
-     */
-
-    /**
      * @swagger
      *
-     * /api/genres:
+     * /api/heathlz:
      *   get:
      *     description: Tells external services if the service is running.
+     *     tags:
+     *       - System
      *     responses:
      *       '200':
      *         description: Successfully reached healthcheck endpoint
