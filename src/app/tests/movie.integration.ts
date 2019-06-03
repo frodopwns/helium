@@ -24,6 +24,7 @@ describe("Testing Movie Controller Methods", () => {
     const testMovie = {
       genres: [],
       id: randomString,
+      key: "0",
       movieId: randomString,
       roles: [],
       runtime: 120,
@@ -57,7 +58,9 @@ describe("Testing Movie Controller Methods", () => {
     const randomString = StringUtilities.getRandomString();
 
     const testMovie = {
+      genres: [],
       id: randomString,
+      key: "0",
       movieId: randomString,
       roles: [],
       runtime: 120,
