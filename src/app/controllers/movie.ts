@@ -1,6 +1,6 @@
 import { DocumentQuery, RetrievedDocument } from "documentdb";
 import { inject, injectable } from "inversify";
-import { Controller, Delete, Get, interfaces, Post } from "inversify-restify-utils";
+import { Controller, Delete, Get, interfaces, Post, Put } from "inversify-restify-utils";
 import { httpStatus } from "../../config/constants";
 import { collection, database } from "../../db/dbconstants";
 import { IDatabaseProvider } from "../../db/idatabaseprovider";
@@ -135,8 +135,8 @@ export class MovieController implements interfaces.Controller {
                     value: movieId,
                 },
             ],
-            query: `SELECT root.movieId, root.type, root.title, root.year,
-            root.runtime, root.genres, root.roles
+            query: `SELECT root.id, root.movieId, root.type, root.title, root.year,
+            root.runtime, root.genres, root.roles, root.key
             FROM root where root.id = @id and root.type = 'Movie'`,
         };
 
@@ -230,6 +230,83 @@ export class MovieController implements interfaces.Controller {
      * @swagger
      *
      * /api/movies/{id}:
+     *   put:
+     *     parameters:
+     *       - name: id
+     *         description: The ID of the movie to patch.
+     *         in: path
+     *         required: true
+     *         schema:
+     *           type: string
+     *     requestBody:
+     *       description: Update a movie
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/Movie'
+     *         application/xml:
+     *           schema:
+     *             $ref: '#/components/schemas/Movie'
+     *         application/x-www-form-urlencoded:
+     *           schema:
+     *             $ref: '#/components/schemas/Movie'
+     *         text/plain:
+     *           schema:
+     *             type: string
+     *     responses:
+     *       '201':
+     *         description: The created movie
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Movie'
+     *       default:
+     *         description: Unexpected error
+     */
+    @Put("/:id")
+    public async updateMovie(req, res) {
+
+        this.telem.trackEvent("create movie");
+
+        const movieId = req.params.id;
+
+        const movie: Movie = Object.assign(Object.create(Movie.prototype),
+            JSON.parse(JSON.stringify(req.body)));
+
+        movie.validate().then(async (errors) => {
+            if (errors.length > 0) {
+                return res.send(httpStatus.BadRequest,
+                    {
+                        message: [].concat.apply([], errors.map((x) =>
+                            Object.values(x.constraints))),
+                        status: httpStatus.BadRequest,
+                    });
+            }
+        });
+
+        // update movie id from url param
+        movie.id = movieId;
+
+        // upsert document, catch errors
+        let resCode: number = httpStatus.Created;
+        let result: RetrievedDocument;
+        try {
+            result = await this.cosmosDb.upsertDocument(
+                database,
+                collection,
+                movie,
+            );
+        } catch (err) {
+            resCode = httpStatus.InternalServerError;
+        }
+        return res.send(resCode, result);
+    }
+
+    /**
+     * @swagger
+     *
+     * /api/movies/{id}:
      *   delete:
      *     description: Delete a movie
      *     parameters:
@@ -258,20 +335,20 @@ export class MovieController implements interfaces.Controller {
         let resCode = httpStatus.NoContent;
         let result: string;
         try {
-          await this.cosmosDb.deleteDocument(
-            database,
-            collection,
-            movieId,
-          );
-          return res.send(resCode);
+            await this.cosmosDb.deleteDocument(
+                database,
+                collection,
+                movieId,
+            );
+            return res.send(resCode);
         } catch (err) {
-          if (err.toString().includes("NotFound")) {
-            resCode = httpStatus.NotFound;
-            result = "A Movie with that ID does not exist";
+            if (err.toString().includes("NotFound")) {
+                resCode = httpStatus.NotFound;
+                result = "A Movie with that ID does not exist";
             } else {
-            resCode = httpStatus.InternalServerError;
-            result = err.toString();
-          }
+                resCode = httpStatus.InternalServerError;
+                result = err.toString();
+            }
         }
         return res.send(resCode, result);
     }
