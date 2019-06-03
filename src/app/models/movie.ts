@@ -26,6 +26,7 @@ import { IValidatable } from "./ivalidatable";
  *         - textSearch
  *         - title
  *         - type
+ *         - key
  *       properties:
  *         id:
  *           type: string
@@ -38,7 +39,7 @@ import { IValidatable } from "./ivalidatable";
  *         type:
  *           type: string
  *         key:
- *           type: number
+ *           type: string
  *         year:
  *           type: number
  *         rating:
@@ -83,12 +84,16 @@ export class Movie implements IValidatable {
     @Equals("Movie")
     public type: string;
 
+    @IsNotEmpty()
+    @NotEquals((x) => x.trim.length() > 0)
+    public key: string;
+
     constructor(
         id: string,
         movieId: string,
         title: string,
         textSearch: string,
-        public key?: string,
+        key: string,
         public year?: number,
         public rating?: number,
         public votes?: number,
