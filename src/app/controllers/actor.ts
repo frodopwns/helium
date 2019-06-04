@@ -153,15 +153,12 @@ export class ActorController implements interfaces.Controller {
      *       required: true
      *       content:
      *         application/json:
-     *           type: string
      *           schema:
      *             $ref: '#/components/schemas/Actor'
      *         application/xml:
-     *           type: string
      *           schema:
      *             $ref: '#/components/schemas/Actor'
      *         application/x-www-form-urlencoded:
-     *           type: string
      *           schema:
      *             $ref: '#/components/schemas/Actor'
      *         text/plain:

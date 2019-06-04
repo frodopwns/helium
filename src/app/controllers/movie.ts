@@ -177,15 +177,12 @@ export class MovieController implements interfaces.Controller {
      *       required: true
      *       content:
      *         application/json:
-     *           type: string
      *           schema:
      *             $ref: '#/components/schemas/Movie'
      *         application/xml:
-     *           type: string
      *           schema:
      *             $ref: '#/components/schemas/Movie'
      *         application/x-www-form-urlencoded:
-     *           type: string
      *           schema:
      *             $ref: '#/components/schemas/Movie'
      *         text/plain:

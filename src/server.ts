@@ -57,7 +57,7 @@ import { AppInsightsProvider } from "./telem/telemProvider";
                     title: "Helium", // Title (required)
                     version: "1.0.0", // Version (required)
                 },
-                openapi: "3.0.0", // Specification (optional, defaults to swagger: '2.0')
+                openapi: "3.0.2", // Specification (optional, defaults to swagger: '2.0')
             },
         };
 

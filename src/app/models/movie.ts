@@ -47,7 +47,9 @@ import { IValidatable } from "./ivalidatable";
  *         votes:
  *           type: number
  *         genres:
- *           type: string[]
+ *           type: array
+ *           items:
+ *             type: string
  *         roles:
  *           type: array
  *           items:

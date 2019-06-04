@@ -43,7 +43,9 @@ import { Movie } from "./movie";
  *         birthYear:
  *           type: number
  *         profession:
- *           type: string[]
+ *           type: array
+ *           items:
+ *             type: string
  *         movies:
  *           type: array
  *           items:
