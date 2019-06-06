@@ -49,6 +49,8 @@ export class ActorController implements interfaces.Controller {
     public async getAll(req: Request, res) {
         const apiStartTime = DateUtilities.getTimestamp();
         const apiName = "Get all actors";
+
+        this.logger.Trace("API server: Endpoint called: " + apiName, req.id());
         this.telem.trackEvent("API server: Endpoint called: " + apiName);
         const querySpec = {
             parameters: [],
@@ -79,6 +81,7 @@ export class ActorController implements interfaces.Controller {
         const apiMetric = this.telem.getMetricTelemetryObject(apiDurationMetricName, apiDuration);
         this.telem.trackMetric(apiMetric);
 
+        this.logger.Trace("API server: " + apiName + "  Result: " + resCode, req.id());
         return res.send(resCode, results);
     }
 
@@ -115,6 +118,7 @@ export class ActorController implements interfaces.Controller {
         const apiName = "Get actor by Id";
         const actorId = req.params.id;
 
+        this.logger.Trace("API server: Endpoint called: " + apiName, req.getId());
         this.telem.trackEvent("API server: Endpoint called: " + apiName);
         const querySpec: DocumentQuery = {
             parameters: [
@@ -154,6 +158,7 @@ export class ActorController implements interfaces.Controller {
         const apiMetric = this.telem.getMetricTelemetryObject(apiDurationMetricName, apiDuration);
         this.telem.trackMetric(apiMetric);
 
+        this.logger.Trace("API server: " + apiName + "  Result: " + resCode, req.getId());
         return res.send(resCode, results);
 
     }
@@ -196,6 +201,7 @@ export class ActorController implements interfaces.Controller {
         const apiStartTime = DateUtilities.getTimestamp();
         const apiName = "Post actor";
 
+        this.logger.Trace("API server: Endpoint called: " + apiName, req.getId());
         this.telem.trackEvent("API server: Endpoint called: " + apiName);
 
         const actor: Actor = Object.assign(Object.create(Actor.prototype),
@@ -232,6 +238,7 @@ export class ActorController implements interfaces.Controller {
         const apiMetric = this.telem.getMetricTelemetryObject(apiDurationMetricName, apiDuration);
         this.telem.trackMetric(apiMetric);
 
+        this.logger.Trace("API server: " + apiName + "  Result: " + resCode, req.getId());
         return res.send(resCode, result);
     }
 }
