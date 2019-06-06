@@ -69,13 +69,19 @@ import { DateUtilities } from "./utilities/dateUtilities";
         // Initialize swagger-jsdoc -> returns validated swagger spec in json format
         const swaggerSpec = swaggerJSDoc(options);
 
+<<<<<<< HEAD
         log.Trace("Setting up swagger.json to serve static");
+=======
+>>>>>>> upstream/master
         app.get("/swagger.json", (req, res) => {
             res.setHeader("Content-Type", "application/json");
             res.send(swaggerSpec);
         });
 
+<<<<<<< HEAD
         log.Trace("Setting up index.html to serve static");
+=======
+>>>>>>> upstream/master
         app.get("/", (req, res) => {
             res.writeHead(200, {
                 "Content-Length": Buffer.byteLength(html),
