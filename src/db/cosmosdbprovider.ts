@@ -54,6 +54,7 @@ export class CosmosDBProvider {
         });
         this.url = url;
         this.telem = telem;
+        this.logger = logger;
     }
 
     /**
@@ -75,7 +76,7 @@ export class CosmosDBProvider {
             // Get the timestamp immediately before the call to queryDocuments
             const queryStartTimeMs = DateUtilities.getTimestamp();
 
-            this.docDbClient.queryDocuments(collectionLink, query, options).toArray((err, results) => {
+            this.docDbClient.queryDocuments(collectionLink, query, options).toArray((err, results, headers) => {
 
                 // Get the timestamp for when the query completes
                 const queryEndTimeMs = DateUtilities.getTimestamp();
@@ -116,6 +117,11 @@ export class CosmosDBProvider {
                 // Track CosmosDB query time metric
                 this.telem.trackMetric(metricTelem);
 
+                // Check for and log the db op RU cost
+                if (!headers["x-ms-request-charge"]) {
+                    this.logger.Trace(`QueryDocument Resource Unit Cost: ${headers["x-ms-request-charge"]}`);
+                }
+
                 if (err == null) {
                     resolve(results);
                 } else {
@@ -146,7 +152,12 @@ export class CosmosDBProvider {
             this.docDbClient.deleteDocument(
                 documentLink,
                 {partitionKey: "0"},
-                (err) => {
+                (err, resource, headers) => {
+                    // Check for and log the db op RU cost
+                    if (!headers["x-ms-request-charge"]) {
+                        this.logger.Trace(`QueryDocument Resource Unit Cost: ${headers["x-ms-request-charge"]}`);
+                    }
+
                     if (err) {
                         reject(`${err.code}: ${err.body}`);
                     } else {
@@ -182,7 +193,12 @@ export class CosmosDBProvider {
             const dbLink = CosmosDBProvider._buildDBLink(database);
 
             const queryCollectionsStartTime = DateUtilities.getTimestamp();
-            this.docDbClient.queryCollections(dbLink, query).toArray((err, results) => {
+            this.docDbClient.queryCollections(dbLink, query).toArray((err, results, headers) => {
+                // Check for and log the db op RU cost
+                if (!headers["x-ms-request-charge"]) {
+                    this.logger.Trace(`QueryDocument Resource Unit Cost: ${headers["x-ms-request-charge"]}`);
+                }
+
                 if (err == null) {
                     resolve(results);
                 } else {
@@ -216,7 +232,12 @@ export class CosmosDBProvider {
         return new Promise((resolve, reject) => {
             const upsertDocumentStartTime = DateUtilities.getTimestamp();
             const collectionLink = CosmosDBProvider._buildCollectionLink(database, collection);
-            this.docDbClient.upsertDocument(collectionLink, content, (err, result) => {
+            this.docDbClient.upsertDocument(collectionLink, content, (err, result, headers) => {
+                // Check for and log the db op RU cost
+                if (!headers["x-ms-request-charge"]) {
+                    this.logger.Trace(`QueryDocument Resource Unit Cost: ${headers["x-ms-request-charge"]}`);
+                }
+
                 if (err == null) {
                     resolve(result);
                 } else {
