@@ -2,7 +2,6 @@
 FROM node:dubnium-alpine AS base
 WORKDIR /app
 COPY scripts ./scripts
-RUN chmod +x ./scripts/start-service.sh
 EXPOSE 3000
 COPY package.json .
  
@@ -24,6 +23,10 @@ RUN npm run lint && npm run build && npm run test-unit
 #
 # ---- Release ----
 FROM base AS release
+# Create a user
+RUN adduser -S appuser
+# Tell docker that all future commands should run as the appuser user
+USER appuser
 COPY --from=dependencies /app/prod_node_modules ./node_modules
 COPY --from=test /app/dist ./dist
 ENTRYPOINT [ "sh", "./scripts/start-service.sh" ]
