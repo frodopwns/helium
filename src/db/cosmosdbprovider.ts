@@ -121,7 +121,7 @@ export class CosmosDBProvider {
                 this.telem.trackMetric(metricTelem);
 
                 // Check for and log the db op RU cost
-                if (!headers["x-ms-request-charge"]) {
+                if (headers["x-ms-request-charge"]) {
                     this.logger.Trace(`QueryDocument Resource Unit Cost: ${headers["x-ms-request-charge"]}`);
                 }
                 this.logger.Trace("Returning from query documents: Result: " + resultCode);
@@ -159,7 +159,7 @@ export class CosmosDBProvider {
                 { partitionKey: "0" },
                 (err, resource, headers) => {
                     // Check for and log the db op RU cost
-                    if (!headers["x-ms-request-charge"]) {
+                    if (headers["x-ms-request-charge"]) {
                         this.logger.Trace(`QueryDocument Resource Unit Cost: ${headers["x-ms-request-charge"]}`);
                     }
                     const deleteEndTimeMs = DateUtilities.getTimestamp();
@@ -202,7 +202,7 @@ export class CosmosDBProvider {
             const queryCollectionsStartTime = DateUtilities.getTimestamp();
             this.docDbClient.queryCollections(dbLink, query).toArray((err, results, headers) => {
                 // Check for and log the db op RU cost
-                if (!headers["x-ms-request-charge"]) {
+                if (headers["x-ms-request-charge"]) {
                     this.logger.Trace(`QueryDocument Resource Unit Cost: ${headers["x-ms-request-charge"]}`);
                 }
                 const queryCollectionsEndTime = DateUtilities.getTimestamp();
@@ -244,7 +244,7 @@ export class CosmosDBProvider {
             const collectionLink = CosmosDBProvider._buildCollectionLink(database, collection);
             this.docDbClient.upsertDocument(collectionLink, content, (err, result, headers) => {
                 // Check for and log the db op RU cost
-                if (!headers["x-ms-request-charge"]) {
+                if (headers["x-ms-request-charge"]) {
                     this.logger.Trace(`QueryDocument Resource Unit Cost: ${headers["x-ms-request-charge"]}`);
                 }
 
