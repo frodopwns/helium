@@ -1,5 +1,7 @@
 # ---- Base Node ----
 FROM node:dubnium-alpine AS base
+# Create a user
+RUN adduser -S appuser
 WORKDIR /app
 COPY scripts ./scripts
 EXPOSE 3000
@@ -23,9 +25,7 @@ RUN npm run lint && npm run build && npm run test-unit
 #
 # ---- Release ----
 FROM base AS release
-# Create a user
-RUN adduser -S appuser
-# Tell docker that all future commands should run as the appuser user
+# Tell docker that all commands in this step should run as the appuser user
 USER appuser
 COPY --from=dependencies /app/prod_node_modules ./node_modules
 COPY --from=test /app/dist ./dist
@@ -35,6 +35,8 @@ ENTRYPOINT [ "sh", "./scripts/start-service.sh" ]
 # ---- Integration Test ----
 # run integration tests
 FROM dependencies AS integration
+# Tell docker that all commands in this step should run as the appuser user
+USER appuser
 ARG integration_server_url=localhost:3000
 ENV integration_server_url=${integration_server_url}
 COPY . .
